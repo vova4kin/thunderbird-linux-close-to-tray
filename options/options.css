@@ -84,3 +84,64 @@ select {
 .status.warning {
   background: var(--status-warn);
 }
+
+h3 {
+  margin: 12px 0 4px;
+  font-size: 1em;
+}
+
+ol {
+  margin: 4px 0 8px;
+  padding-inline-start: 20px;
+}
+
+ol li {
+  margin: 6px 0;
+}
+
+ol li small {
+  display: block;
+  color: var(--muted);
+}
+
+.command-row {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+code,
+pre {
+  font-family: monospace;
+  font-size: 0.95em;
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
+pre {
+  padding: 8px;
+  white-space: pre-wrap;
+}
+
+.kwin-table {
+  border-collapse: collapse;
+  margin: 4px 0;
+}
+
+.kwin-table th,
+.kwin-table td {
+  text-align: start;
+  vertical-align: top;
+  padding: 4px 8px 4px 0;
+}
+
+details {
+  margin: 8px 0 4px;
+}
+
+button.copied::after {
+  content: " ✓";
+}

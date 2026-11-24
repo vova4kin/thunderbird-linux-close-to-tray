@@ -1,31 +1,139 @@
 {
-  "extensionName": { "message": "Close to Tray for Linux" },
-  "extensionDescription": { "message": "Hide Thunderbird to the system tray instead of closing it. Tray icon with unread counter and menu for KDE Plasma, GNOME (AppIndicator), XFCE; works on Wayland and X11, including Snap and Flatpak." },
-
-  "trayTitle": { "message": "Thunderbird" },
-  "tooltipNoUnread": { "message": "No unread messages" },
+  "extensionName": {
+    "message": "Close to Tray for Linux"
+  },
+  "extensionDescription": {
+    "message": "Hide Thunderbird to the system tray instead of closing it. Tray icon with unread counter and menu for KDE Plasma, GNOME (AppIndicator), XFCE; works on Wayland and X11, including Snap and Flatpak."
+  },
+  "trayTitle": {
+    "message": "Thunderbird"
+  },
+  "tooltipNoUnread": {
+    "message": "No unread messages"
+  },
   "tooltipUnread": {
     "message": "Unread messages: $COUNT$",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
-  "menuShow": { "message": "Show Thunderbird" },
-  "menuHide": { "message": "Hide Thunderbird" },
-  "menuCompose": { "message": "Write a Message" },
-  "menuOptions": { "message": "Close to Tray Settings" },
-  "menuQuit": { "message": "Quit" },
-
-  "optionsTitle": { "message": "Close to Tray for Linux" },
-  "optionsBehaviour": { "message": "Window behaviour" },
-  "optionInterceptClose": { "message": "Hide to the tray when the main window is closed (✕)" },
-  "optionInterceptCloseHint": { "message": "Use Ctrl+Q, File › Quit or “Quit” in the tray menu to exit Thunderbird." },
-  "optionMinimizeToTray": { "message": "Hide to the tray when the main window is minimized" },
-  "optionMinimizeToTrayHint": { "message": "Works with Thunderbird’s own title bar buttons; some Wayland compositors do not report minimizing done by the window manager." },
-  "optionStartInTray": { "message": "Start Thunderbird hidden in the tray" },
-  "optionsUnread": { "message": "Unread messages" },
-  "optionShowUnreadCount": { "message": "Show the number of unread messages on the tray icon" },
-  "optionUnreadScope": { "message": "Count unread messages in" },
-  "optionUnreadScopeInbox": { "message": "Inbox folders only" },
-  "optionUnreadScopeAll": { "message": "All folders except Trash, Junk, Sent, Drafts, Templates and Archives" },
-  "statusTrayAvailable": { "message": "Tray icon is active." },
-  "statusTrayUnavailable": { "message": "No system tray was found (StatusNotifierItem / AppIndicator). The window will not be hidden until a tray becomes available. On GNOME install the “AppIndicator and KStatusNotifierItem Support” extension." }
+  "menuShow": {
+    "message": "Show Thunderbird"
+  },
+  "menuHide": {
+    "message": "Hide Thunderbird"
+  },
+  "menuCompose": {
+    "message": "Write a Message"
+  },
+  "menuOptions": {
+    "message": "Close to Tray Settings"
+  },
+  "menuQuit": {
+    "message": "Quit"
+  },
+  "optionsTitle": {
+    "message": "Close to Tray for Linux"
+  },
+  "optionsBehaviour": {
+    "message": "Window behaviour"
+  },
+  "optionInterceptClose": {
+    "message": "Hide to the tray when the main window is closed (✕)"
+  },
+  "optionInterceptCloseHint": {
+    "message": "Use Ctrl+Q, File › Quit or “Quit” in the tray menu to exit Thunderbird."
+  },
+  "optionMinimizeToTray": {
+    "message": "Hide to the tray when the main window is minimized"
+  },
+  "optionMinimizeToTrayHint": {
+    "message": "Works with Thunderbird’s own title bar buttons; some Wayland compositors do not report minimizing done by the window manager."
+  },
+  "optionStartInTray": {
+    "message": "Start Thunderbird hidden in the tray"
+  },
+  "optionsUnread": {
+    "message": "Unread messages"
+  },
+  "optionShowUnreadCount": {
+    "message": "Show the number of unread messages on the tray icon"
+  },
+  "optionUnreadScope": {
+    "message": "Count unread messages in"
+  },
+  "optionUnreadScopeInbox": {
+    "message": "Inbox folders only"
+  },
+  "optionUnreadScopeAll": {
+    "message": "All folders except Trash, Junk, Sent, Drafts, Templates and Archives"
+  },
+  "statusTrayAvailable": {
+    "message": "Tray icon is active."
+  },
+  "statusTrayUnavailable": {
+    "message": "No system tray was found (StatusNotifierItem / AppIndicator). The window will not be hidden until a tray becomes available. On GNOME install the “AppIndicator and KStatusNotifierItem Support” extension."
+  },
+  "copyButton": {
+    "message": "Copy"
+  },
+  "kwinTitle": {
+    "message": "Window position on KDE Plasma (Wayland)"
+  },
+  "kwinIntro": {
+    "message": "Wayland does not allow applications to position their own windows, so after the window is shown from the tray KWin places it according to its placement policy (often centered). A KWin window rule makes KDE remember the position of the Thunderbird main window."
+  },
+  "kwinImportTitle": {
+    "message": "Quick setup: import the rule"
+  },
+  "kwinImportStep1": {
+    "message": "Save the rule file:"
+  },
+  "kwinDownloadButton": {
+    "message": "Download rule (.kwinrule)"
+  },
+  "kwinImportStep2": {
+    "message": "Open System Settings › Window Management › Window Rules. Thunderbird cannot start other programs, so run this command in a terminal or in KRunner (Alt+Space):"
+  },
+  "kwinImportStep2Hint": {
+    "message": "Or search for “Window Rules” in the application launcher."
+  },
+  "kwinImportStep3": {
+    "message": "Click “Import…”, select the downloaded file, then click “Apply”. The rule takes effect the next time the window appears."
+  },
+  "kwinManualTitle": {
+    "message": "Manual setup"
+  },
+  "kwinManualIntro": {
+    "message": "In Window Rules click “Add New…”, enter a description and set:"
+  },
+  "kwinFieldWindowClass": {
+    "message": "Window class (application)"
+  },
+  "kwinFieldWindowTitle": {
+    "message": "Window title"
+  },
+  "kwinFieldWindowTypes": {
+    "message": "Window types"
+  },
+  "kwinFieldPosition": {
+    "message": "Position (Add Property… › Position)"
+  },
+  "kwinMatchRegex": {
+    "message": "Regular Expression:"
+  },
+  "kwinValueNormalWindow": {
+    "message": "Normal Window only"
+  },
+  "kwinValueRemember": {
+    "message": "Remember"
+  },
+  "kwinLocaleHint": {
+    "message": "The title expression excludes composer windows for the English and Ukrainian interface. For other languages add the localized prefix of the composer window title (the text before “:”)."
+  },
+  "kwinRuleTextTitle": {
+    "message": "Rule as text (.kwinrule)"
+  }
 }

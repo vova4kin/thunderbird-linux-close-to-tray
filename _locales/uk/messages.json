@@ -1,31 +1,139 @@
 {
-  "extensionName": { "message": "Close to Tray for Linux" },
-  "extensionDescription": { "message": "Ховає Thunderbird у системний трей замість закриття. Іконка в треї з лічильником непрочитаних і меню для KDE Plasma, GNOME (AppIndicator), XFCE; працює у Wayland та X11, зокрема зі Snap і Flatpak." },
-
-  "trayTitle": { "message": "Thunderbird" },
-  "tooltipNoUnread": { "message": "Немає непрочитаних листів" },
+  "extensionName": {
+    "message": "Close to Tray for Linux"
+  },
+  "extensionDescription": {
+    "message": "Ховає Thunderbird у системний трей замість закриття. Іконка в треї з лічильником непрочитаних і меню для KDE Plasma, GNOME (AppIndicator), XFCE; працює у Wayland та X11, зокрема зі Snap і Flatpak."
+  },
+  "trayTitle": {
+    "message": "Thunderbird"
+  },
+  "tooltipNoUnread": {
+    "message": "Немає непрочитаних листів"
+  },
   "tooltipUnread": {
     "message": "Непрочитаних листів: $COUNT$",
-    "placeholders": { "count": { "content": "$1" } }
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
   },
-  "menuShow": { "message": "Показати Thunderbird" },
-  "menuHide": { "message": "Сховати Thunderbird" },
-  "menuCompose": { "message": "Написати листа" },
-  "menuOptions": { "message": "Налаштування Close to Tray" },
-  "menuQuit": { "message": "Вийти" },
-
-  "optionsTitle": { "message": "Close to Tray for Linux" },
-  "optionsBehaviour": { "message": "Поведінка вікна" },
-  "optionInterceptClose": { "message": "Ховати в трей при закритті головного вікна (✕)" },
-  "optionInterceptCloseHint": { "message": "Щоб вийти з Thunderbird, використовуйте Ctrl+Q, Файл › Вийти або «Вийти» в меню трею." },
-  "optionMinimizeToTray": { "message": "Ховати в трей при згортанні головного вікна" },
-  "optionMinimizeToTrayHint": { "message": "Працює з кнопками власного заголовка Thunderbird; деякі композитори Wayland не повідомляють про згортання кнопкою віконного менеджера." },
-  "optionStartInTray": { "message": "Запускати Thunderbird одразу схованим у трей" },
-  "optionsUnread": { "message": "Непрочитані листи" },
-  "optionShowUnreadCount": { "message": "Показувати кількість непрочитаних листів на іконці в треї" },
-  "optionUnreadScope": { "message": "Рахувати непрочитані в" },
-  "optionUnreadScopeInbox": { "message": "Лише папках «Вхідні»" },
-  "optionUnreadScopeAll": { "message": "Усіх папках, крім Кошика, Спаму, Надісланих, Чернеток, Шаблонів та Архівів" },
-  "statusTrayAvailable": { "message": "Іконка в треї активна." },
-  "statusTrayUnavailable": { "message": "Системний трей не знайдено (StatusNotifierItem / AppIndicator). Вікно не ховатиметься, доки трей не стане доступним. У GNOME встановіть розширення «AppIndicator and KStatusNotifierItem Support»." }
+  "menuShow": {
+    "message": "Показати Thunderbird"
+  },
+  "menuHide": {
+    "message": "Сховати Thunderbird"
+  },
+  "menuCompose": {
+    "message": "Написати листа"
+  },
+  "menuOptions": {
+    "message": "Налаштування Close to Tray"
+  },
+  "menuQuit": {
+    "message": "Вийти"
+  },
+  "optionsTitle": {
+    "message": "Close to Tray for Linux"
+  },
+  "optionsBehaviour": {
+    "message": "Поведінка вікна"
+  },
+  "optionInterceptClose": {
+    "message": "Ховати в трей при закритті головного вікна (✕)"
+  },
+  "optionInterceptCloseHint": {
+    "message": "Щоб вийти з Thunderbird, використовуйте Ctrl+Q, Файл › Вийти або «Вийти» в меню трею."
+  },
+  "optionMinimizeToTray": {
+    "message": "Ховати в трей при згортанні головного вікна"
+  },
+  "optionMinimizeToTrayHint": {
+    "message": "Працює з кнопками власного заголовка Thunderbird; деякі композитори Wayland не повідомляють про згортання кнопкою віконного менеджера."
+  },
+  "optionStartInTray": {
+    "message": "Запускати Thunderbird одразу схованим у трей"
+  },
+  "optionsUnread": {
+    "message": "Непрочитані листи"
+  },
+  "optionShowUnreadCount": {
+    "message": "Показувати кількість непрочитаних листів на іконці в треї"
+  },
+  "optionUnreadScope": {
+    "message": "Рахувати непрочитані в"
+  },
+  "optionUnreadScopeInbox": {
+    "message": "Лише папках «Вхідні»"
+  },
+  "optionUnreadScopeAll": {
+    "message": "Усіх папках, крім Кошика, Спаму, Надісланих, Чернеток, Шаблонів та Архівів"
+  },
+  "statusTrayAvailable": {
+    "message": "Іконка в треї активна."
+  },
+  "statusTrayUnavailable": {
+    "message": "Системний трей не знайдено (StatusNotifierItem / AppIndicator). Вікно не ховатиметься, доки трей не стане доступним. У GNOME встановіть розширення «AppIndicator and KStatusNotifierItem Support»."
+  },
+  "copyButton": {
+    "message": "Копіювати"
+  },
+  "kwinTitle": {
+    "message": "Позиція вікна в KDE Plasma (Wayland)"
+  },
+  "kwinIntro": {
+    "message": "Wayland не дозволяє програмам самим задавати позицію своїх вікон, тож після показу з трею KWin розміщує вікно за своєю політикою (часто по центру). Правило вікна KWin змушує KDE запам'ятовувати позицію головного вікна Thunderbird."
+  },
+  "kwinImportTitle": {
+    "message": "Швидке налаштування: імпорт правила"
+  },
+  "kwinImportStep1": {
+    "message": "Збережіть файл правила:"
+  },
+  "kwinDownloadButton": {
+    "message": "Завантажити правило (.kwinrule)"
+  },
+  "kwinImportStep2": {
+    "message": "Відкрийте Системні налаштування › Керування вікнами › Правила вікон. Thunderbird не може запускати інші програми, тож виконайте цю команду в терміналі або в KRunner (Alt+Пробіл):"
+  },
+  "kwinImportStep2Hint": {
+    "message": "Або знайдіть «Правила вікон» у меню програм."
+  },
+  "kwinImportStep3": {
+    "message": "Натисніть «Імпортувати…», виберіть завантажений файл і натисніть «Застосувати». Правило подіє наступного разу, коли вікно з'явиться."
+  },
+  "kwinManualTitle": {
+    "message": "Ручне налаштування"
+  },
+  "kwinManualIntro": {
+    "message": "У Правилах вікон натисніть «Додати…», введіть опис і вкажіть:"
+  },
+  "kwinFieldWindowClass": {
+    "message": "Клас вікна (програма)"
+  },
+  "kwinFieldWindowTitle": {
+    "message": "Заголовок вікна"
+  },
+  "kwinFieldWindowTypes": {
+    "message": "Типи вікон"
+  },
+  "kwinFieldPosition": {
+    "message": "Позиція (Додати властивість… › Позиція)"
+  },
+  "kwinMatchRegex": {
+    "message": "Формальний вираз:"
+  },
+  "kwinValueNormalWindow": {
+    "message": "Лише звичайне вікно"
+  },
+  "kwinValueRemember": {
+    "message": "Запам'ятовувати"
+  },
+  "kwinLocaleHint": {
+    "message": "Вираз для заголовка виключає вікна написання листа для англійського та українського інтерфейсу. Для інших мов додайте локалізований префікс заголовка вікна написання (текст до «:»)."
+  },
+  "kwinRuleTextTitle": {
+    "message": "Правило текстом (.kwinrule)"
+  }
 }

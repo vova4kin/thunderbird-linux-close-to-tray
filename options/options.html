@@ -49,6 +49,46 @@
         </select>
       </div>
     </fieldset>
+
+    <fieldset id="kwinSection" hidden>
+      <legend data-i18n="kwinTitle"></legend>
+      <p data-i18n="kwinIntro"></p>
+
+      <h3 data-i18n="kwinImportTitle"></h3>
+      <ol>
+        <li>
+          <span data-i18n="kwinImportStep1"></span>
+          <button type="button" id="kwinDownload" data-i18n="kwinDownloadButton"></button>
+        </li>
+        <li>
+          <span data-i18n="kwinImportStep2"></span>
+          <span class="command-row">
+            <code id="kwinCommand">systemsettings kcm_kwinrules</code>
+            <button type="button" data-copy="kwinCommand" data-i18n="copyButton"></button>
+          </span>
+          <small data-i18n="kwinImportStep2Hint"></small>
+        </li>
+        <li data-i18n="kwinImportStep3"></li>
+      </ol>
+
+      <h3 data-i18n="kwinManualTitle"></h3>
+      <p data-i18n="kwinManualIntro"></p>
+      <table class="kwin-table">
+        <tbody>
+          <tr><th data-i18n="kwinFieldWindowClass"></th><td><span data-i18n="kwinMatchRegex"></span> <code id="kwinClass"></code></td></tr>
+          <tr><th data-i18n="kwinFieldWindowTitle"></th><td><span data-i18n="kwinMatchRegex"></span> <code id="kwinTitleRegex"></code></td></tr>
+          <tr><th data-i18n="kwinFieldWindowTypes"></th><td data-i18n="kwinValueNormalWindow"></td></tr>
+          <tr><th data-i18n="kwinFieldPosition"></th><td data-i18n="kwinValueRemember"></td></tr>
+        </tbody>
+      </table>
+      <small data-i18n="kwinLocaleHint"></small>
+
+      <details>
+        <summary data-i18n="kwinRuleTextTitle"></summary>
+        <pre id="kwinRuleText"></pre>
+        <button type="button" data-copy="kwinRuleText" data-i18n="copyButton"></button>
+      </details>
+    </fieldset>
   </main>
 </body>
 </html>

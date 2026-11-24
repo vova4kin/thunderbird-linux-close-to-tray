@@ -283,7 +283,10 @@ async function onSettingsChanged(changes, area) {
 
 function onRuntimeMessage(message) {
   if (message?.type == "getStatus") {
-    return Promise.resolve({ trayAvailable: state.trayAvailable });
+    return messenger.trayWindow.getEnvironment().then(environment => ({
+      trayAvailable: state.trayAvailable,
+      environment,
+    }));
   }
   return undefined;
 }

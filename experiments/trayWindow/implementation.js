@@ -74,6 +74,7 @@ var TrayWindowWaylandActivation = class {
       this.gdk_window_get_toplevel = this.gdk.declare("gdk_window_get_toplevel", abi, gp, gp);
       this.gdk_window_get_display = this.gdk.declare("gdk_window_get_display", abi, gp, gp);
       this.gdk_window_focus = this.gdk.declare("gdk_window_focus", abi, ctypes.void_t, gp, ctypes.uint32_t);
+      this.gdk_display_get_default = this.gdk.declare("gdk_display_get_default", abi, gp);
       this.gdk_wayland_display_get_type = this.gdk.declare("gdk_wayland_display_get_type", abi, GType);
       this.gdk_wayland_display_set_startup_notification_id = this.gdk.declare(
         "gdk_wayland_display_set_startup_notification_id",
@@ -97,6 +98,24 @@ var TrayWindowWaylandActivation = class {
 
   get available() {
     return !!this.gdk;
+  }
+
+  /**
+   * @returns {boolean} true if GTK runs on a Wayland display. Falls back to
+   *   the session environment if GDK is not usable.
+   */
+  isWayland() {
+    if (this.gdk) {
+      try {
+        const display = this.gdk_display_get_default();
+        if (!display.isNull()) {
+          return !!this.g_type_check_instance_is_a(display, this.gdk_wayland_display_get_type());
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return Services.env.get("XDG_SESSION_TYPE") == "wayland" && Services.env.get("GDK_BACKEND") != "x11";
   }
 
   /**
@@ -272,6 +291,10 @@ var TrayWindowController = class {
     state.wasMaximized =
       win.windowState == win.STATE_MAXIMIZED ||
       (win.windowState == win.STATE_MINIMIZED && state.lastNormalState == win.STATE_MAXIMIZED);
+    // Window position is only known (and settable) on X11; on Wayland the
+    // compositor places the window (see the KWin rule on the options page).
+    state.screenX = win.screenX;
+    state.screenY = win.screenY;
     this.getBaseWindow(win).visibility = false;
     state.hidden = true;
   }
@@ -303,6 +326,10 @@ var TrayWindowController = class {
       }
     } else if (state.wasMaximized && win.windowState != win.STATE_MAXIMIZED) {
       win.maximize();
+    }
+    if (!state.wasMaximized && !this.activation.isWayland()) {
+      // X11: put the window back where it was.
+      win.moveTo(state.screenX, state.screenY);
     }
     if (state.wasMaximized) {
       // A maximized window has no client-side shadow, so the offset issue
@@ -503,6 +530,12 @@ this.trayWindow = class extends TrayWindowExtensionCommon.ExtensionAPI {
         },
         async isHidden() {
           return api.getController().isHidden();
+        },
+        async getEnvironment() {
+          return {
+            wayland: api.getController().activation.isWayland(),
+            desktop: Services.env.get("XDG_CURRENT_DESKTOP") || "",
+          };
         },
         async quit() {
           return api.getController().quit();

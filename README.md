@@ -60,6 +60,26 @@ into the archive, with `manifest.json` at its root.
 *Tools* (≡) › *Add-ons and Themes* › gear icon › *Install Add-on From File…* ›
 choose the `.xpi`.
 
+## Window position
+
+- **X11:** the add-on puts the window back where it was.
+- **Wayland:** applications cannot position their own windows, so the
+  compositor decides where the window reappears. On **KDE Plasma** a KWin
+  window rule makes KWin remember the main window position. The add-on's
+  settings page (shown on KDE Wayland) offers the rule as a downloadable
+  `.kwinrule` file, together with step-by-step instructions. Manual setup in
+  *System Settings › Window Management › Window Rules › Add New…*:
+
+  | Property | Value |
+  |---|---|
+  | Window class | Regular Expression: `(?i)thunderbird` |
+  | Window title | Regular Expression: `^(?!Write: \|Створення повідомлення: ).* - Mozilla Thunderbird$` |
+  | Window types | Normal Window |
+  | Position | Remember |
+
+  The title expression keeps composer windows (English/Ukrainian UI) from
+  overwriting the remembered position.
+
 ## Known limitations
 
 - On Wayland the window manager's own minimize button may not tell the

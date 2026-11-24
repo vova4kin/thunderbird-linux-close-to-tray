@@ -55,6 +55,12 @@ in recent releases) offers neither a click hook nor custom menu items.
   There is a 10 s cap, after which the callbacks are deliberately kept alive
   rather than freed while GLib might still reference them.
 
+**Window position.** On X11 the add-on restores the position with
+`window.moveTo()`. On Wayland that is impossible, so the options page
+(shown only on KDE Wayland, detected via `trayWindow.getEnvironment()`) offers
+a KWin window rule as a downloadable text file plus instructions. The add-on
+never runs external programs or changes desktop settings itself.
+
 **onShutdown(isAppShutdown).**
 
 - `systemTray`: unsubscribes the signal, unregisters both D-Bus objects,

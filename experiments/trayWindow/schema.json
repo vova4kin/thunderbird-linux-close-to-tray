@@ -70,6 +70,13 @@
         "parameters": []
       },
       {
+        "name": "getEnvironment",
+        "type": "function",
+        "async": true,
+        "description": "Resolves to { wayland: boolean, desktop: string } describing the display server and the XDG_CURRENT_DESKTOP value.",
+        "parameters": []
+      },
+      {
         "name": "quit",
         "type": "function",
         "async": true,
