@@ -1,0 +1,117 @@
+[
+  {
+    "namespace": "systemTray",
+    "description": "Low-level bridge to a freedesktop StatusNotifierItem (system tray icon) with a com.canonical.dbusmenu context menu, implemented in-process via GIO/GDBus. Contains no policy: background.js supplies icons, texts and menu items and reacts to events.",
+    "types": [
+      {
+        "id": "IconImage",
+        "type": "object",
+        "properties": {
+          "width": { "type": "integer", "minimum": 1, "maximum": 256 },
+          "height": { "type": "integer", "minimum": 1, "maximum": 256 },
+          "rgba": {
+            "type": "string",
+            "description": "Base64 encoded, non-premultiplied RGBA pixel data (width * height * 4 bytes), as returned by CanvasRenderingContext2D.getImageData()."
+          }
+        }
+      },
+      {
+        "id": "MenuItem",
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Identifier reported back by onMenuItemClicked." },
+          "type": {
+            "type": "string",
+            "enum": ["normal", "separator"],
+            "optional": true,
+            "default": "normal"
+          },
+          "label": { "type": "string", "optional": true },
+          "enabled": { "type": "boolean", "optional": true, "default": true },
+          "visible": { "type": "boolean", "optional": true, "default": true }
+        }
+      },
+      {
+        "id": "TrayProperties",
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "description": "Application title shown by the tray host." }
+        }
+      }
+    ],
+    "functions": [
+      {
+        "name": "create",
+        "type": "function",
+        "async": true,
+        "description": "Export the tray icon on the session bus and register it with the StatusNotifierWatcher. Resolves to true if a tray host accepted the icon.",
+        "parameters": [{ "name": "properties", "$ref": "TrayProperties" }]
+      },
+      {
+        "name": "setIcon",
+        "type": "function",
+        "async": true,
+        "description": "Replace the icon pixmaps (several sizes may be supplied).",
+        "parameters": [
+          { "name": "images", "type": "array", "items": { "$ref": "IconImage" } }
+        ]
+      },
+      {
+        "name": "setToolTip",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          { "name": "title", "type": "string" },
+          { "name": "description", "type": "string" }
+        ]
+      },
+      {
+        "name": "setMenu",
+        "type": "function",
+        "async": true,
+        "description": "Replace the context menu items.",
+        "parameters": [
+          { "name": "items", "type": "array", "items": { "$ref": "MenuItem" } }
+        ]
+      },
+      {
+        "name": "destroy",
+        "type": "function",
+        "async": true,
+        "description": "Remove the tray icon from the session bus.",
+        "parameters": []
+      }
+    ],
+    "events": [
+      {
+        "name": "onActivate",
+        "type": "function",
+        "description": "Primary activation (usually a left click) on the tray icon.",
+        "parameters": [
+          {
+            "name": "activationToken",
+            "type": "string",
+            "description": "xdg-activation token supplied by the tray host, or an empty string."
+          }
+        ]
+      },
+      {
+        "name": "onSecondaryActivate",
+        "type": "function",
+        "description": "Secondary activation (usually a middle click) on the tray icon.",
+        "parameters": [{ "name": "activationToken", "type": "string" }]
+      },
+      {
+        "name": "onMenuItemClicked",
+        "type": "function",
+        "parameters": [{ "name": "id", "type": "string" }]
+      },
+      {
+        "name": "onAvailabilityChanged",
+        "type": "function",
+        "description": "Fired when the tray host (StatusNotifierWatcher) appears or disappears.",
+        "parameters": [{ "name": "available", "type": "boolean" }]
+      }
+    ]
+  }
+]

@@ -1,0 +1,31 @@
+{
+  "extensionName": { "message": "Close to Tray for Linux" },
+  "extensionDescription": { "message": "Hide Thunderbird to the system tray instead of closing it. Tray icon with unread counter and menu for KDE Plasma, GNOME (AppIndicator), XFCE; works on Wayland and X11, including Snap and Flatpak." },
+
+  "trayTitle": { "message": "Thunderbird" },
+  "tooltipNoUnread": { "message": "No unread messages" },
+  "tooltipUnread": {
+    "message": "Unread messages: $COUNT$",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "menuShow": { "message": "Show Thunderbird" },
+  "menuHide": { "message": "Hide Thunderbird" },
+  "menuCompose": { "message": "Write a Message" },
+  "menuOptions": { "message": "Close to Tray Settings" },
+  "menuQuit": { "message": "Quit" },
+
+  "optionsTitle": { "message": "Close to Tray for Linux" },
+  "optionsBehaviour": { "message": "Window behaviour" },
+  "optionInterceptClose": { "message": "Hide to the tray when the main window is closed (✕)" },
+  "optionInterceptCloseHint": { "message": "Use Ctrl+Q, File › Quit or “Quit” in the tray menu to exit Thunderbird." },
+  "optionMinimizeToTray": { "message": "Hide to the tray when the main window is minimized" },
+  "optionMinimizeToTrayHint": { "message": "Works with Thunderbird’s own title bar buttons; some Wayland compositors do not report minimizing done by the window manager." },
+  "optionStartInTray": { "message": "Start Thunderbird hidden in the tray" },
+  "optionsUnread": { "message": "Unread messages" },
+  "optionShowUnreadCount": { "message": "Show the number of unread messages on the tray icon" },
+  "optionUnreadScope": { "message": "Count unread messages in" },
+  "optionUnreadScopeInbox": { "message": "Inbox folders only" },
+  "optionUnreadScopeAll": { "message": "All folders except Trash, Junk, Sent, Drafts, Templates and Archives" },
+  "statusTrayAvailable": { "message": "Tray icon is active." },
+  "statusTrayUnavailable": { "message": "No system tray was found (StatusNotifierItem / AppIndicator). The window will not be hidden until a tray becomes available. On GNOME install the “AppIndicator and KStatusNotifierItem Support” extension." }
+}

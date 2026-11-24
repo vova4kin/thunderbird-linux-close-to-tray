@@ -1,0 +1,31 @@
+{
+  "extensionName": { "message": "Close to Tray for Linux" },
+  "extensionDescription": { "message": "Ховає Thunderbird у системний трей замість закриття. Іконка в треї з лічильником непрочитаних і меню для KDE Plasma, GNOME (AppIndicator), XFCE; працює у Wayland та X11, зокрема зі Snap і Flatpak." },
+
+  "trayTitle": { "message": "Thunderbird" },
+  "tooltipNoUnread": { "message": "Немає непрочитаних листів" },
+  "tooltipUnread": {
+    "message": "Непрочитаних листів: $COUNT$",
+    "placeholders": { "count": { "content": "$1" } }
+  },
+  "menuShow": { "message": "Показати Thunderbird" },
+  "menuHide": { "message": "Сховати Thunderbird" },
+  "menuCompose": { "message": "Написати листа" },
+  "menuOptions": { "message": "Налаштування Close to Tray" },
+  "menuQuit": { "message": "Вийти" },
+
+  "optionsTitle": { "message": "Close to Tray for Linux" },
+  "optionsBehaviour": { "message": "Поведінка вікна" },
+  "optionInterceptClose": { "message": "Ховати в трей при закритті головного вікна (✕)" },
+  "optionInterceptCloseHint": { "message": "Щоб вийти з Thunderbird, використовуйте Ctrl+Q, Файл › Вийти або «Вийти» в меню трею." },
+  "optionMinimizeToTray": { "message": "Ховати в трей при згортанні головного вікна" },
+  "optionMinimizeToTrayHint": { "message": "Працює з кнопками власного заголовка Thunderbird; деякі композитори Wayland не повідомляють про згортання кнопкою віконного менеджера." },
+  "optionStartInTray": { "message": "Запускати Thunderbird одразу схованим у трей" },
+  "optionsUnread": { "message": "Непрочитані листи" },
+  "optionShowUnreadCount": { "message": "Показувати кількість непрочитаних листів на іконці в треї" },
+  "optionUnreadScope": { "message": "Рахувати непрочитані в" },
+  "optionUnreadScopeInbox": { "message": "Лише папках «Вхідні»" },
+  "optionUnreadScopeAll": { "message": "Усіх папках, крім Кошика, Спаму, Надісланих, Чернеток, Шаблонів та Архівів" },
+  "statusTrayAvailable": { "message": "Іконка в треї активна." },
+  "statusTrayUnavailable": { "message": "Системний трей не знайдено (StatusNotifierItem / AppIndicator). Вікно не ховатиметься, доки трей не стане доступним. У GNOME встановіть розширення «AppIndicator and KStatusNotifierItem Support»." }
+}

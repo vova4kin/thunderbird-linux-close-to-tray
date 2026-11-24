@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Close to Tray for Linux - original artwork, MPL-2.0 -->
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="#2a7ae2"/>
+  <rect x="13" y="19" width="38" height="27" rx="4" fill="#ffffff"/>
+  <polygon points="14,21.5 17,19.5 32,31 47,19.5 50,21.5 32,36" fill="#2a7ae2"/>
+  <rect x="20" y="51" width="24" height="3.5" rx="1.75" fill="#ffffff" opacity="0.85"/>
+</svg>

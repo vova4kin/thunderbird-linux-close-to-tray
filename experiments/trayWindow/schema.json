@@ -1,0 +1,89 @@
+[
+  {
+    "namespace": "trayWindow",
+    "description": "Low-level bridge for hiding and showing the main Thunderbird window (mail:3pane) and for intercepting its close button. Contains no policy: background.js decides when to call it.",
+    "types": [
+      {
+        "id": "WindowOptions",
+        "type": "object",
+        "properties": {
+          "interceptClose": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Hide the last main window instead of closing it when its close button is used."
+          },
+          "minimizeToTray": {
+            "type": "boolean",
+            "optional": true,
+            "description": "Hide the main window when it is minimized."
+          }
+        }
+      }
+    ],
+    "functions": [
+      {
+        "name": "setOptions",
+        "type": "function",
+        "async": true,
+        "description": "Update the window behaviour flags.",
+        "parameters": [{ "name": "options", "$ref": "WindowOptions" }]
+      },
+      {
+        "name": "hide",
+        "type": "function",
+        "async": true,
+        "description": "Hide all visible main windows. If no main window is loaded yet, the next one is hidden as soon as it loads.",
+        "parameters": []
+      },
+      {
+        "name": "show",
+        "type": "function",
+        "async": true,
+        "description": "Show all hidden main windows and focus the most recent one.",
+        "parameters": [
+          {
+            "name": "activationToken",
+            "type": "string",
+            "optional": true,
+            "description": "Optional xdg-activation token (Wayland) used to legitimately raise the window."
+          }
+        ]
+      },
+      {
+        "name": "toggle",
+        "type": "function",
+        "async": true,
+        "description": "Hide the main windows if they are visible and active, otherwise show and focus them.",
+        "parameters": [
+          {
+            "name": "activationToken",
+            "type": "string",
+            "optional": true
+          }
+        ]
+      },
+      {
+        "name": "isHidden",
+        "type": "function",
+        "async": true,
+        "description": "Resolves to true if main windows exist and all of them are hidden.",
+        "parameters": []
+      },
+      {
+        "name": "quit",
+        "type": "function",
+        "async": true,
+        "description": "Request a regular application quit (same path as File > Quit). Resolves to false if the quit was cancelled.",
+        "parameters": []
+      }
+    ],
+    "events": [
+      {
+        "name": "onVisibilityChanged",
+        "type": "function",
+        "description": "Fired when the main windows were hidden or shown.",
+        "parameters": [{ "name": "hidden", "type": "boolean" }]
+      }
+    ]
+  }
+]

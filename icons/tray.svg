@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Tray variant: fills the whole canvas for legibility at 22px. MPL-2.0 -->
+  <rect x="2" y="8" width="60" height="46" rx="8" fill="#2a7ae2"/>
+  <polygon points="8,15.5 12.5,12 32,27 51.5,12 56,15.5 32,34" fill="#ffffff"/>
+</svg>
