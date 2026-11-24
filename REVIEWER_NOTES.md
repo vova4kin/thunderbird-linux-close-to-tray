@@ -27,8 +27,9 @@ in recent releases) offers neither a click hook nor custom menu items.
   `gdk_window_focus`) through js-ctypes. That call happens only after verifying
   with `g_type_check_instance_is_a` that the window is a `GdkWindow` and the
   display is a `GdkWaylandDisplay`. When re-showing, the window is resized by
-  1 px (queued while still hidden for normal windows, so no visible jump; right
-  after mapping for maximized ones). This works around a Gecko/Wayland issue where, after unmap/remap,
+  1 px (queued while still hidden, so no visible jump; maximized windows have
+  no shadow and are only re-maximized if the compositor mapped them
+  unmaximized). This works around a Gecko/Wayland issue where, after unmap/remap,
   the rendering subsurface loses its offset inside the shadowed CSD surface
   (the UI is drawn shifted while input is not).
 - `experiments/systemTray/implementation.js`: a StatusNotifierItem plus a

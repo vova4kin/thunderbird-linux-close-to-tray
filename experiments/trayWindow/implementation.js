@@ -304,11 +304,26 @@ var TrayWindowController = class {
     } else if (state.wasMaximized && win.windowState != win.STATE_MAXIMIZED) {
       win.maximize();
     }
-    if (!resyncBeforeShow) {
-      // Resizing a maximized/minimized window while hidden breaks its size
-      // mode, so these get a +1/-1 px resize right after being mapped.
+    if (state.wasMaximized) {
+      // A maximized window has no client-side shadow, so the offset issue
+      // does not apply; resizing it would only drop the maximized state.
+      // The compositor may still map it unmaximized, so maximize again once
+      // the window is mapped if needed.
+      this.scheduleRemaximize(win);
+    } else if (!resyncBeforeShow) {
+      // E.g. a minimized window: resizing it while hidden breaks its size
+      // mode, so it gets a +1/-1 px resize right after being restored.
       this.scheduleSurfaceResync(win);
     }
+  }
+
+  scheduleRemaximize(win) {
+    win.setTimeout(() => {
+      const state = this.windows.get(win);
+      if (!win.closed && state && !state.hidden && win.windowState == win.STATE_NORMAL) {
+        win.maximize();
+      }
+    }, TRAY_WINDOW_RESYNC_DELAY_MS);
   }
 
   /**
