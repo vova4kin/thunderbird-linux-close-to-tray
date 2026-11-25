@@ -25,7 +25,7 @@ no helper programs, no native messaging host.
   in Inbox folders only or in all regular folders.
 - English and Ukrainian user interface.
 
-Requires Thunderbird 128 – 160.
+Requires Thunderbird 128 – 161.
 
 ## How it works
 

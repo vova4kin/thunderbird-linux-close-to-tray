@@ -94,4 +94,4 @@ Install, then:
 5. Hide the window, then disable the add-on in the Add-ons Manager → the
    window reappears and the icon disappears.
 
-Tested on Thunderbird 160.0 (Snap) with KDE Plasma 6.6 Wayland on Ubuntu 26.04.
+Tested on Thunderbird 160.0 and 161.0 (Snap) with KDE Plasma 6.6 Wayland on Ubuntu 26.04.
