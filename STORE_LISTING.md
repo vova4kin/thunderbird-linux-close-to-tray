@@ -8,7 +8,8 @@ English and Ukrainian, so the listing is provided in both languages.
 | Field | Value |
 |---|---|
 | Name | Close to Tray for Linux |
-| Add-on URL (slug) | `close-to-tray-linux` |
+| Add-on URL (slug) | `close-to-tray-for-linux` |
+| Listing | https://addons.thunderbird.net/thunderbird/addon/close-to-tray-for-linux/ |
 | Categories | Appearance and Customization; Miscellaneous |
 | Platform | Linux (the add-on does nothing on other platforms) |
 | License | Mozilla Public License 2.0 |
@@ -92,6 +93,11 @@ Close to Tray for Linux залишає Thunderbird працювати у фон�
 бо жоден звичайний API розширень цього не вміє. Тому Thunderbird показує
 запит на «повний, необмежений доступ». Розширення використовує цей доступ
 лише для головного вікна та іконки в треї. Код відкритий (MPL-2.0).
+
+## Version notes for 1.0.8 (release notes)
+
+The add-on description no longer lists desktops and packages that have not
+been tested yet.
 
 ## Version notes for 1.0.7 (release notes)
 

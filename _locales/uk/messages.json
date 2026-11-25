@@ -3,7 +3,7 @@
     "message": "Close to Tray for Linux"
   },
   "extensionDescription": {
-    "message": "Ховає Thunderbird у системний трей замість закриття. Іконка в треї з лічильником непрочитаних і меню для KDE Plasma, GNOME (AppIndicator), XFCE; працює у Wayland та X11, зокрема зі Snap і Flatpak."
+    "message": "Ховає Thunderbird у системний трей замість закриття. Іконка в треї з лічильником непрочитаних і меню. Перевірено в KDE Plasma Wayland зі Snap-пакетом."
   },
   "trayTitle": {
     "message": "Thunderbird"

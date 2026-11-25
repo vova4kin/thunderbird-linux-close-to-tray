@@ -3,7 +3,7 @@
     "message": "Close to Tray for Linux"
   },
   "extensionDescription": {
-    "message": "Hide Thunderbird to the system tray instead of closing it. Tray icon with unread counter and menu for KDE Plasma, GNOME (AppIndicator), XFCE; works on Wayland and X11, including Snap and Flatpak."
+    "message": "Hide Thunderbird to the system tray instead of closing it. Tray icon with unread counter and menu. Tested on KDE Plasma Wayland with the Snap package."
   },
   "trayTitle": {
     "message": "Thunderbird"

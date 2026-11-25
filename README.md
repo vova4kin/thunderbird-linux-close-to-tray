@@ -7,6 +7,9 @@ context menu.
 It is a single self-contained `.xpi`: no helper programs, no native
 messaging host, so it also works inside the Snap sandbox.
 
+**Install:** [addons.thunderbird.net](https://addons.thunderbird.net/thunderbird/addon/close-to-tray-for-linux/)
+(or *Add-ons and Themes* in Thunderbird, search for "Close to Tray for Linux").
+
 **Tested:** Thunderbird 160 and 161 (Snap) on KDE Plasma 6.6, Wayland,
 Ubuntu 26.04.
 
@@ -61,7 +64,7 @@ The script checks the JSON and JavaScript syntax and writes
 `dist/close-to-tray-linux-<version>.xpi`. Only the files the add-on needs go
 into the archive, with `manifest.json` at its root.
 
-## Installing for testing
+## Installing a local build
 
 *Tools* (≡) › *Add-ons and Themes* › gear icon › *Install Add-on From File…* ›
 choose the `.xpi`.
