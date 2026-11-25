@@ -47,16 +47,17 @@ var { ctypes: TrayWindowCtypes } = ChromeUtils.importESModule(
 
 var TRAY_WINDOW_MAIN_URL = "chrome://messenger/content/messenger.xhtml";
 var TRAY_WINDOW_MAIN_TYPE = "mail:3pane";
-// Delays for the post-show surface resync (see scheduleSurfaceResync).
-var TRAY_WINDOW_RESYNC_DELAY_MS = 100;
-var TRAY_WINDOW_RESYNC_STEP_MS = 150;
+// Delay before post-show fixups run (the window must be mapped again).
+var TRAY_WINDOW_AFTER_SHOW_DELAY_MS = 100;
+// Delay between the two steps of the post-show 1 px resize.
+var TRAY_WINDOW_RESIZE_STEP_MS = 150;
 
 /**
- * Optional helper that raises a GTK window on Wayland with an xdg-activation
- * token. Every failure (no GTK3/GDK, X11 session, missing symbol) simply
- * disables it, window.focus() is used as fallback.
+ * Small GDK helper: detects Wayland and raises a window with an
+ * xdg-activation token. Every failure (no GTK3/GDK, missing symbol) simply
+ * disables it; callers fall back to window.focus() / environment variables.
  */
-var TrayWindowWaylandActivation = class {
+var TrayWindowGdk = class {
   constructor() {
     this.gdk = null;
     this.gobject = null;
@@ -94,10 +95,6 @@ var TrayWindowWaylandActivation = class {
       console.warn("trayWindow: Wayland activation via GDK unavailable", e);
       this.close();
     }
-  }
-
-  get available() {
-    return !!this.gdk;
   }
 
   /**
@@ -174,7 +171,7 @@ var TrayWindowController = class {
     this.hideNextWindow = false;
     this.quitting = false;
     this.visibilityListeners = new Set();
-    this.activation = new TrayWindowWaylandActivation();
+    this.gdk = new TrayWindowGdk();
 
     this.observe = this.observe.bind(this);
     Services.obs.addObserver(this.observe, "quit-application-granted");
@@ -241,12 +238,19 @@ var TrayWindowController = class {
     return win.docShell.treeOwner.QueryInterface(Ci.nsIBaseWindow);
   }
 
+  /** Open main windows that are currently hidden (true) or visible (false). */
+  windowsWithHidden(hidden) {
+    return [...this.windows]
+      .filter(([win, state]) => state.hidden == hidden && !win.closed)
+      .map(([win]) => win);
+  }
+
   visibleWindows() {
-    return [...this.windows].filter(([w, s]) => !s.hidden && !w.closed).map(([w]) => w);
+    return this.windowsWithHidden(false);
   }
 
   hiddenWindows() {
-    return [...this.windows].filter(([w, s]) => s.hidden && !w.closed).map(([w]) => w);
+    return this.windowsWithHidden(true);
   }
 
   onClose(win, event) {
@@ -299,81 +303,68 @@ var TrayWindowController = class {
     state.hidden = true;
   }
 
+  /**
+   * Make a hidden window visible again, restoring its size mode and position.
+   *
+   * Gecko/Wayland issue: after the toplevel is unmapped and mapped again, the
+   * rendering subsurface loses its offset inside the client-side decorated
+   * (shadowed) surface, so the UI is drawn shifted while input is not. Any
+   * resize makes Gecko re-position it:
+   *   - normal window: resize by 1 px while still hidden, so the first frame
+   *     is already correct (no visible jump); the direction alternates so the
+   *     size never drifts by more than one pixel;
+   *   - minimized window: resizing it while hidden breaks its size mode, so
+   *     it gets a +1/-1 px resize right after being restored;
+   *   - maximized window: has no shadow, so no resize (that would drop the
+   *     maximized state); it is only maximized again if mapped unmaximized.
+   */
   showWindow(win) {
     const state = this.windows.get(win);
     if (!state || !state.hidden) {
       return;
     }
-    // Gecko/Wayland issue: after the toplevel is unmapped and mapped again,
-    // the rendering subsurface loses its offset inside the client-side
-    // decorated (shadowed) surface, so the UI is drawn shifted while input
-    // is not. Any resize makes Gecko re-position it. For a normal window the
-    // resize is queued while still hidden, so the very first frame is
-    // already correct (no visible jump); the direction alternates so the
-    // size never drifts by more than one pixel.
-    const resyncBeforeShow = !state.wasMaximized && win.windowState == win.STATE_NORMAL;
-    if (resyncBeforeShow) {
-      state.resyncDelta = state.resyncDelta == 1 ? -1 : 1;
-      win.resizeBy(state.resyncDelta, state.resyncDelta);
+    const wasMinimized = win.windowState == win.STATE_MINIMIZED;
+
+    if (!state.wasMaximized && win.windowState == win.STATE_NORMAL) {
+      state.resizeDelta = state.resizeDelta == 1 ? -1 : 1;
+      win.resizeBy(state.resizeDelta, state.resizeDelta);
     }
+
     this.getBaseWindow(win).visibility = true;
     state.hidden = false;
-    if (win.windowState == win.STATE_MINIMIZED) {
-      if (state.wasMaximized) {
+
+    if (state.wasMaximized) {
+      if (win.windowState != win.STATE_MAXIMIZED) {
         win.maximize();
-      } else {
-        win.restore();
       }
-    } else if (state.wasMaximized && win.windowState != win.STATE_MAXIMIZED) {
-      win.maximize();
+      this.afterShow(win, () => {
+        if (win.windowState == win.STATE_NORMAL) {
+          win.maximize();
+        }
+      });
+      return;
     }
-    if (!state.wasMaximized && !this.activation.isWayland()) {
-      // X11: put the window back where it was.
+
+    if (wasMinimized) {
+      win.restore();
+      this.afterShow(win, () => {
+        win.resizeBy(1, 1);
+        win.setTimeout(() => win.resizeBy(-1, -1), TRAY_WINDOW_RESIZE_STEP_MS);
+      });
+    }
+    if (!this.gdk.isWayland()) {
+      // X11: put the window back where it was (impossible on Wayland).
       win.moveTo(state.screenX, state.screenY);
     }
-    if (state.wasMaximized) {
-      // A maximized window has no client-side shadow, so the offset issue
-      // does not apply; resizing it would only drop the maximized state.
-      // The compositor may still map it unmaximized, so maximize again once
-      // the window is mapped if needed.
-      this.scheduleRemaximize(win);
-    } else if (!resyncBeforeShow) {
-      // E.g. a minimized window: resizing it while hidden breaks its size
-      // mode, so it gets a +1/-1 px resize right after being restored.
-      this.scheduleSurfaceResync(win);
-    }
   }
 
-  scheduleRemaximize(win) {
+  /** Run fn shortly after a window was shown, unless it was closed/hidden. */
+  afterShow(win, fn) {
     win.setTimeout(() => {
-      const state = this.windows.get(win);
-      if (!win.closed && state && !state.hidden && win.windowState == win.STATE_NORMAL) {
-        win.maximize();
+      if (!win.closed && !this.windows.get(win)?.hidden) {
+        fn();
       }
-    }, TRAY_WINDOW_RESYNC_DELAY_MS);
-  }
-
-  /**
-   * Post-show variant of the surface resync described in showWindow(): nudge
-   * the size by one pixel and back once the window is mapped again.
-   * Harmless on X11.
-   */
-  scheduleSurfaceResync(win) {
-    win.setTimeout(() => {
-      if (win.closed || win.windowState == win.STATE_FULLSCREEN) {
-        return;
-      }
-      const state = this.windows.get(win);
-      if (state?.hidden) {
-        return;
-      }
-      win.resizeBy(1, 1);
-      win.setTimeout(() => {
-        if (!win.closed) {
-          win.resizeBy(-1, -1);
-        }
-      }, TRAY_WINDOW_RESYNC_STEP_MS);
-    }, TRAY_WINDOW_RESYNC_DELAY_MS);
+    }, TRAY_WINDOW_AFTER_SHOW_DELAY_MS);
   }
 
   focusWindow(win, token) {
@@ -387,7 +378,7 @@ var TrayWindowController = class {
       }
       done = true;
       try {
-        if (token && this.activation.activate(this.getBaseWindow(win), token)) {
+        if (token && this.gdk.activate(this.getBaseWindow(win), token)) {
           return;
         }
       } catch (e) {
@@ -490,7 +481,7 @@ var TrayWindowController = class {
     }
     this.windows.clear();
     this.visibilityListeners.clear();
-    this.activation.close();
+    this.gdk.close();
   }
 };
 
@@ -533,7 +524,7 @@ this.trayWindow = class extends TrayWindowExtensionCommon.ExtensionAPI {
         },
         async getEnvironment() {
           return {
-            wayland: api.getController().activation.isWayland(),
+            wayland: api.getController().gdk.isWayland(),
             desktop: Services.env.get("XDG_CURRENT_DESKTOP") || "",
           };
         },

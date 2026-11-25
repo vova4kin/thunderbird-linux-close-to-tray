@@ -12,6 +12,7 @@ in recent releases) offers neither a click hook nor custom menu items.
 
 **Architecture / separation of concerns.**
 
+- `common/settings.js`: default settings shared with the options page.
 - `background.js`: all logic (settings in `storage.local`, unread counting via
   `messenger.accounts`/`messenger.folders`, icon rendering on a canvas, event
   handling).

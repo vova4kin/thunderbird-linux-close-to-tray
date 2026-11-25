@@ -4,11 +4,16 @@ A Thunderbird add-on for Linux that hides the main window to the system tray
 instead of closing it, and adds a tray icon with an unread counter and a
 context menu.
 
-Works on KDE Plasma, GNOME (with the *AppIndicator and KStatusNotifierItem
-Support* extension), XFCE and other desktops that implement the
-StatusNotifierItem / AppIndicator protocol, on Wayland and X11, including the
-Snap and Flatpak packages of Thunderbird. It is a single self-contained `.xpi`:
-no helper programs, no native messaging host.
+It is a single self-contained `.xpi`: no helper programs, no native
+messaging host, so it also works inside the Snap sandbox.
+
+**Tested:** Thunderbird 160 and 161 (Snap) on KDE Plasma 6.6, Wayland,
+Ubuntu 26.04.
+
+**Designed for, not yet tested:** GNOME (with the *AppIndicator and
+KStatusNotifierItem Support* extension), XFCE and other desktops that
+implement StatusNotifierItem / AppIndicator; X11 sessions; distribution and
+Flatpak packages of Thunderbird. Reports are welcome.
 
 ## Features
 
@@ -31,6 +36,7 @@ Requires Thunderbird 128 – 161.
 
 | Part | Responsibility |
 |---|---|
+| `common/settings.js` | Default settings shared by the background script and the options page. |
 | `background.js` | All logic: settings (`storage.local`), unread counting (`accounts`/`folders` API), icon rendering on a canvas, reacting to tray events. |
 | `experiments/trayWindow` | Experiment API: hide/show the main window via `nsIBaseWindow.visibility`, cancel its `close` event, optional minimize-to-tray, Wayland focus via GDK. |
 | `experiments/systemTray` | Experiment API: an in-process StatusNotifierItem + `com.canonical.dbusmenu` menu implemented with GIO/GDBus through js-ctypes. |
@@ -90,6 +96,10 @@ choose the `.xpi`.
   task bar instead of raising it.
 - Without a tray host (for example stock GNOME), the add-on never hides the
   window, so you cannot lose it.
+- If the sandbox does not allow owning a `org.freedesktop.StatusNotifierItem-*`
+  bus name (possible with Flatpak), the icon is registered via the unique
+  connection name. It may then stay in the tray after the add-on is
+  disabled, until Thunderbird exits.
 
 ## License
 

@@ -49,6 +49,7 @@ var { ctypes: SystemTrayCtypes } = ChromeUtils.importESModule(
   "resource://gre/modules/ctypes.sys.mjs"
 );
 
+var SYSTEM_TRAY_NULL = SystemTrayCtypes.voidptr_t(0);
 var SYSTEM_TRAY_ITEM_PATH = "/StatusNotifierItem";
 // Tried in order; both are allowed by the Snap AppArmor profile.
 var SYSTEM_TRAY_MENU_PATHS = ["/MenuBar", "/com/canonical/dbusmenu"];
@@ -250,7 +251,6 @@ var SystemTrayGLib = class {
     this.g_variant_get_int32 = g(this.glib, "g_variant_get_int32", ctypes.int32_t, gp);
     this.g_variant_get_uint32 = g(this.glib, "g_variant_get_uint32", ctypes.uint32_t, gp);
     this.g_variant_get_string = g(this.glib, "g_variant_get_string", str, gp, gsize.ptr);
-    this.g_variant_get_type_string = g(this.glib, "g_variant_get_type_string", str, gp);
     this.g_error_free = g(this.glib, "g_error_free", ctypes.void_t, this.GError.ptr);
     this.g_main_context_new = g(this.glib, "g_main_context_new", gp);
     this.g_main_context_unref = g(this.glib, "g_main_context_unref", ctypes.void_t, gp);
@@ -263,7 +263,6 @@ var SystemTrayGLib = class {
 
     // GIO: D-Bus.
     this.g_bus_get_sync = g(this.gio, "g_bus_get_sync", gp, ctypes.int, gp, GErrorPP);
-    this.g_dbus_connection_get_unique_name = g(this.gio, "g_dbus_connection_get_unique_name", str, gp);
     this.g_dbus_node_info_new_for_xml = g(this.gio, "g_dbus_node_info_new_for_xml", gp, str, GErrorPP);
     this.g_dbus_node_info_lookup_interface = g(this.gio, "g_dbus_node_info_lookup_interface", gp, gp, str);
     this.g_dbus_node_info_unref = g(this.gio, "g_dbus_node_info_unref", ctypes.void_t, gp);
@@ -657,11 +656,11 @@ var SystemTrayService = class {
           return this.getProperty(iface.readString(), property.readString());
         } catch (e) {
           console.error(e);
-          return SystemTrayCtypes.voidptr_t(0);
+          return SYSTEM_TRAY_NULL;
         }
       },
       null,
-      SystemTrayCtypes.voidptr_t(0)
+      SYSTEM_TRAY_NULL
     );
 
     // All our properties are read-only; GDBus rejects writes before calling
@@ -739,6 +738,18 @@ var SystemTrayService = class {
     return reply;
   }
 
+  /** Call a method of the bus driver (org.freedesktop.DBus). */
+  callBusDriver(method, params, timeout) {
+    return this.callSync(
+      "org.freedesktop.DBus",
+      "/org/freedesktop/DBus",
+      "org.freedesktop.DBus",
+      method,
+      params,
+      timeout
+    );
+  }
+
   /**
    * Try to own org.freedesktop.StatusNotifierItem-<PID>-<N>. Returns the name
    * or null (e.g. inside Flatpak, which only allows names below the app id);
@@ -754,10 +765,7 @@ var SystemTrayService = class {
       const name = `org.freedesktop.StatusNotifierItem-${pid}-${n}`;
       let reply;
       try {
-        reply = this.callSync(
-          "org.freedesktop.DBus",
-          "/org/freedesktop/DBus",
-          "org.freedesktop.DBus",
+        reply = this.callBusDriver(
           "RequestName",
           lib.tuple([lib.str(name), lib.uint32(DBUS_NAME_FLAG_DO_NOT_QUEUE)])
         );
@@ -780,14 +788,7 @@ var SystemTrayService = class {
     }
     const lib = this.lib;
     try {
-      const reply = this.callSync(
-        "org.freedesktop.DBus",
-        "/org/freedesktop/DBus",
-        "org.freedesktop.DBus",
-        "ReleaseName",
-        lib.tuple([lib.str(this.busName)]),
-        1000
-      );
+      const reply = this.callBusDriver("ReleaseName", lib.tuple([lib.str(this.busName)]), 1000);
       lib.g_variant_unref(reply);
     } catch (e) {
       console.warn(`systemTray: ReleaseName failed: ${e.message}`);
@@ -974,7 +975,7 @@ var SystemTrayService = class {
         case "IconThemePath":
           return lib.array("s", []);
       }
-      return SystemTrayCtypes.voidptr_t(0);
+      return SYSTEM_TRAY_NULL;
     }
 
     switch (property) {
@@ -1011,7 +1012,7 @@ var SystemTrayService = class {
       case "Menu":
         return lib.objectPath(this.menuPath);
     }
-    return SystemTrayCtypes.voidptr_t(0);
+    return SYSTEM_TRAY_NULL;
   }
 
   // ---- GVariant construction for our data ----
@@ -1051,6 +1052,12 @@ var SystemTrayService = class {
     return this.lib.dict(props);
   }
 
+  /** (ia{sv}av) layout node of a leaf menu item. */
+  buildItemLayout(item) {
+    const lib = this.lib;
+    return lib.tuple([lib.int32(item.dbusId), this.buildItemProperties(item), lib.array("v", [])]);
+  }
+
   buildLayout(parentId) {
     const lib = this.lib;
     if (parentId != 0) {
@@ -1058,13 +1065,9 @@ var SystemTrayService = class {
       if (!item) {
         throw new Error(`Unknown menu id ${parentId}`);
       }
-      return lib.tuple([lib.int32(item.dbusId), this.buildItemProperties(item), lib.array("v", [])]);
+      return this.buildItemLayout(item);
     }
-    const children = this.menuItems.map(item =>
-      lib.variant(
-        lib.tuple([lib.int32(item.dbusId), this.buildItemProperties(item), lib.array("v", [])])
-      )
-    );
+    const children = this.menuItems.map(item => lib.variant(this.buildItemLayout(item)));
     return lib.tuple([
       lib.int32(0),
       lib.dict({ "children-display": lib.str("submenu") }),
@@ -1073,6 +1076,9 @@ var SystemTrayService = class {
   }
 
   emitSignal(path, iface, name, params) {
+    if (!this.connection || this.destroyed) {
+      return;
+    }
     const lib = this.lib;
     const error = lib.makeError();
     lib.g_dbus_connection_emit_signal(this.connection, null, path, iface, name, params, error.address);
@@ -1080,6 +1086,11 @@ var SystemTrayService = class {
     if (message) {
       console.warn(`systemTray: cannot emit ${name}: ${message}`);
     }
+  }
+
+  /** Emit a parameterless StatusNotifierItem signal (NewIcon, NewToolTip). */
+  emitItemSignal(name) {
+    this.emitSignal(SYSTEM_TRAY_ITEM_PATH, SYSTEM_TRAY_SNI_IFACE, name, null);
   }
 
   // ---- Updates coming from the extension ----
@@ -1106,17 +1117,13 @@ var SystemTrayService = class {
       }
       return { width: image.width, height: image.height, argb };
     });
-    if (this.connection) {
-      this.emitSignal(SYSTEM_TRAY_ITEM_PATH, SYSTEM_TRAY_SNI_IFACE, "NewIcon", null);
-    }
+    this.emitItemSignal("NewIcon");
   }
 
   setToolTip(title, description) {
     this.toolTipTitle = title;
     this.toolTipDescription = description;
-    if (this.connection) {
-      this.emitSignal(SYSTEM_TRAY_ITEM_PATH, SYSTEM_TRAY_SNI_IFACE, "NewToolTip", null);
-    }
+    this.emitItemSignal("NewToolTip");
   }
 
   setMenu(items) {
@@ -1129,7 +1136,7 @@ var SystemTrayService = class {
       visible: item.visible !== false,
     }));
     this.menuRevision++;
-    if (this.connection) {
+    if (this.connection && !this.destroyed) {
       const lib = this.lib;
       this.emitSignal(
         this.menuPath,

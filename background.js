@@ -15,15 +15,7 @@
 
 "use strict";
 
-const DEFAULT_SETTINGS = {
-  interceptClose: true,
-  minimizeToTray: false,
-  startInTray: false,
-  showUnreadCount: true,
-  // "inbox": only Inbox folders; "all": all folders except trash, junk,
-  // sent, drafts, templates, archives and outbox.
-  unreadScope: "inbox",
-};
+// DEFAULT_SETTINGS comes from common/settings.js (loaded first).
 
 const EXCLUDED_FOLDER_USES = ["trash", "junk", "sent", "drafts", "templates", "archives", "outbox"];
 const ICON_SIZES = [22, 32, 48, 64];
@@ -35,9 +27,13 @@ const state = {
   trayAvailable: false,
   windowHidden: false,
   unreadCount: 0,
-  /** @type {Map<string, number>} unread count per counted folder id */
+  /** @type {Map<string, number>} unread count per counted folder */
   folderUnread: new Map(),
   recountTimer: null,
+  recountRunning: false,
+  // Set when a folder count changes while a full recount is running, so the
+  // recount (which may have read older values) is repeated.
+  changedDuringRecount: false,
   iconImage: null,
   renderedIconKey: null,
 };
@@ -76,6 +72,11 @@ function isCountedFolder(folder) {
   return !uses.some(use => EXCLUDED_FOLDER_USES.includes(use));
 }
 
+/** Stable key for a folder (MailFolder.id exists since TB 121). */
+function folderKey(folder) {
+  return folder.id ?? `${folder.accountId}:${folder.path}`;
+}
+
 function collectFolders(folders, out) {
   for (const folder of folders || []) {
     out.push(folder);
@@ -85,24 +86,37 @@ function collectFolders(folders, out) {
 }
 
 async function recountAllFolders() {
-  const counts = new Map();
-  const accounts = await messenger.accounts.list(true);
-  for (const account of accounts) {
-    const topLevel = account.rootFolder?.subFolders ?? account.folders ?? [];
-    for (const folder of collectFolders(topLevel, [])) {
-      if (!isCountedFolder(folder)) {
-        continue;
-      }
-      try {
-        const info = await messenger.folders.getFolderInfo(folder.id ?? folder);
-        counts.set(folder.id ?? `${folder.accountId}:${folder.path}`, info.unreadMessageCount || 0);
-      } catch (e) {
-        // Folder may have disappeared meanwhile; ignore it.
+  if (state.recountRunning) {
+    state.changedDuringRecount = true;
+    return;
+  }
+  state.recountRunning = true;
+  state.changedDuringRecount = false;
+  try {
+    const counts = new Map();
+    const accounts = await messenger.accounts.list(true);
+    for (const account of accounts) {
+      const topLevel = account.rootFolder?.subFolders ?? account.folders ?? [];
+      for (const folder of collectFolders(topLevel, [])) {
+        if (!isCountedFolder(folder)) {
+          continue;
+        }
+        try {
+          const info = await messenger.folders.getFolderInfo(folder.id ?? folder);
+          counts.set(folderKey(folder), info.unreadMessageCount || 0);
+        } catch (e) {
+          // Folder may have disappeared meanwhile; ignore it.
+        }
       }
     }
+    state.folderUnread = counts;
+    await setUnreadCount(sumCounts());
+  } finally {
+    state.recountRunning = false;
   }
-  state.folderUnread = counts;
-  await setUnreadCount(sumCounts());
+  if (state.changedDuringRecount) {
+    scheduleRecount();
+  }
 }
 
 function sumCounts() {
@@ -124,8 +138,10 @@ function onFolderInfoChanged(folder, info) {
   if (info.unreadMessageCount === undefined || !isCountedFolder(folder)) {
     return;
   }
-  const key = folder.id ?? `${folder.accountId}:${folder.path}`;
-  state.folderUnread.set(key, info.unreadMessageCount);
+  if (state.recountRunning) {
+    state.changedDuringRecount = true;
+  }
+  state.folderUnread.set(folderKey(folder), info.unreadMessageCount);
   setUnreadCount(sumCounts()).catch(console.error);
 }
 

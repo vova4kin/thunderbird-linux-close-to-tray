@@ -4,15 +4,6 @@
 
 "use strict";
 
-// Must match DEFAULT_SETTINGS in background.js.
-const DEFAULTS = {
-  interceptClose: true,
-  minimizeToTray: false,
-  startInTray: false,
-  showUnreadCount: true,
-  unreadScope: "inbox",
-};
-
 // KWin window rule that makes KDE Plasma (Wayland) remember the position of
 // the main window. Wayland does not let applications position their own
 // windows, so this has to be done by the compositor.
@@ -87,7 +78,7 @@ function localize() {
 }
 
 async function loadSettings() {
-  const settings = await messenger.storage.local.get(DEFAULTS);
+  const settings = await messenger.storage.local.get(DEFAULT_SETTINGS);
   for (const input of document.querySelectorAll("[data-setting]")) {
     const key = input.dataset.setting;
     if (input.type == "checkbox") {
