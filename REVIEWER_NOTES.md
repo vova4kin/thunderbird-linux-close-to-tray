@@ -100,3 +100,10 @@ Install, then:
    window reappears and the icon disappears.
 
 Tested on Thunderbird 160.0 and 161.0 (Snap) with KDE Plasma 6.6 Wayland on Ubuntu 26.04.
+
+**Validator messages.** The warning `Invalid permissions "accountsRead"` is a
+false positive from the Firefox-based linter: `accountsRead` is a Thunderbird
+permission, required by `messenger.folders.getFolderInfo()` for the unread
+counter. `strict_max_version` is set deliberately, because the add-on uses
+Experiment APIs that depend on Thunderbird internals. It is raised only after
+testing with each new Thunderbird release.
