@@ -40,6 +40,10 @@ in recent releases) offers neither a click hook nor custom menu items.
   Snap and Flatpak block them. The bus name and object paths follow the
   Thunderbird Snap AppArmor profile.
 
+**No globals.** Each experiment script is wrapped in a function and only
+exports its API class, so nothing else leaks into the shared experiment
+global.
+
 **js-ctypes safety.**
 
 - Only non-variadic functions are declared.
