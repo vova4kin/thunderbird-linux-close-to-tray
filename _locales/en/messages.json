@@ -130,9 +130,6 @@
   "kwinValueRemember": {
     "message": "Remember"
   },
-  "kwinLocaleHint": {
-    "message": "The title expression excludes composer windows for the English and Ukrainian interface. For other languages add the localized prefix of the composer window title (the text before “:”)."
-  },
   "kwinRuleTextTitle": {
     "message": "Rule as text (.kwinrule)"
   }

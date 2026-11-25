@@ -12,10 +12,12 @@ const KWIN_RULE = {
   // Matches "thunderbird" (distribution package), "thunderbird_thunderbird"
   // (Snap) and "org.mozilla.Thunderbird" (Flatpak).
   windowClass: "(?i)thunderbird",
-  // Main window titles end with " - Mozilla Thunderbird"; composer windows
-  // ("Write: ..." / "Створення повідомлення: ...") are excluded so that they
-  // do not overwrite the remembered position.
-  windowTitle: "^(?!Write: |Створення повідомлення: ).* - Mozilla Thunderbird$",
+  // In every Thunderbird language the main window title ends with the full
+  // brand name ("<tab> - Mozilla Thunderbird", a few languages use "–"),
+  // while composer windows use the short one ("Write: <subject> -
+  // Thunderbird"). So composer windows never match and cannot overwrite the
+  // remembered position.
+  windowTitle: "[-–] Mozilla Thunderbird$",
 };
 
 function kwinRuleText() {

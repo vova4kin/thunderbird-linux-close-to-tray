@@ -79,12 +79,13 @@ choose the `.xpi`.
   | Property | Value |
   |---|---|
   | Window class | Regular Expression: `(?i)thunderbird` |
-  | Window title | Regular Expression: `^(?!Write: \|Створення повідомлення: ).* - Mozilla Thunderbird$` |
+  | Window title | Regular Expression: `[-–] Mozilla Thunderbird$` |
   | Window types | Normal Window |
   | Position | Remember |
 
-  The title expression keeps composer windows (English/Ukrainian UI) from
-  overwriting the remembered position.
+  This works in every Thunderbird language: the main window title always ends
+  with the full brand name, while composer windows use the short one
+  ("Write: … - Thunderbird"), so they never overwrite the remembered position.
 
 ## Known limitations
 
